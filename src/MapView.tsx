@@ -9,38 +9,63 @@ export default function MapView() {
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
   const [selectedProps, setSelectedProps] = useState<Props>(null);
-  const [showAssets, setShowAssets] = useState(true);
+  const [showSubstations, setShowSubstations] = useState(true);
   const [riskView, setRiskView] = useState(false);
 
-  // Apply UI state to map (after map loads)
+  // Apply UI state to map after layers exist
+  useEffect(() => {
+    if (!showSubstations && riskView) {
+      setRiskView(false);
+    }
+  }, [showSubstations, riskView]);
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    if (!map.getLayer("assets-points")) return;
 
-    // Toggle visibility
-    map.setLayoutProperty(
-      "assets-points",
-      "visibility",
-      showAssets ? "visible" : "none"
-    );
+    const mainLayer = "substations-points";
+    const glowLayer = "substations-glow";
+
+    if (!map.getLayer(mainLayer) || !map.getLayer(glowLayer)) return;
+
+    const visibility = showSubstations ? "visible" : "none";
+    map.setLayoutProperty(mainLayer, "visibility", visibility);
+    map.setLayoutProperty(glowLayer, "visibility", visibility);
 
     // Toggle styling mode (risk vs default)
-    // Uses the "criticality" property as a hook
+    // Hook: "criticality" property (1-5)
     if (riskView) {
-      map.setPaintProperty("assets-points", "circle-radius", [
+      map.setPaintProperty(mainLayer, "circle-radius", [
         "interpolate",
         ["linear"],
-        ["coalesce", ["to-number", ["get", "criticality"]], 0],
-        0, 5,
-        5, 11
+        ["coalesce", ["to-number", ["get", "criticality"]], 1],
+        1, 6,
+        5, 12
       ]);
-      map.setPaintProperty("assets-points", "circle-opacity", 0.85);
+      map.setPaintProperty(mainLayer, "circle-color", [
+        "interpolate",
+        ["linear"],
+        ["coalesce", ["to-number", ["get", "criticality"]], 1],
+        1, "#5DADE2",
+        3, "#BB8FCE",
+        5, "#E74C3C"
+      ]);
+      map.setPaintProperty(glowLayer, "circle-radius", [
+        "interpolate",
+        ["linear"],
+        ["coalesce", ["to-number", ["get", "criticality"]], 1],
+        1, 12,
+        5, 22
+      ]);
+      map.setPaintProperty(glowLayer, "circle-opacity", 0.25);
     } else {
-      map.setPaintProperty("assets-points", "circle-radius", 6);
-      map.setPaintProperty("assets-points", "circle-opacity", 1);
+      // Default mode: subtle sizing and consistent “clean” tone
+      map.setPaintProperty(mainLayer, "circle-radius", 7);
+      map.setPaintProperty(mainLayer, "circle-color", "#7FB3D5");
+      map.setPaintProperty(glowLayer, "circle-radius", 16);
+      map.setPaintProperty(glowLayer, "circle-opacity", 0.18);
     }
-  }, [showAssets, riskView]);
+  }, [showSubstations, riskView]);
 
   useEffect(() => {
     const token = import.meta.env.VITE_MAPBOX_TOKEN as string | undefined;
@@ -56,45 +81,66 @@ export default function MapView() {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/light-v11",
-      center: [-98.5, 39.8],
-      zoom: 3.5,
+      // We'll fit bounds after loading substations, so these are just placeholders
+      center: [-122.2, 37.7],
+      zoom: 9,
     });
 
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     map.on("load", async () => {
-      const res = await fetch("/data/assets.geojson");
-      const assets = await res.json();
+      const res = await fetch("/data/substations.geojson");
+      if (!res.ok) throw new Error("Failed to load /data/substations.geojson");
+      const substations = await res.json();
 
-      map.addSource("assets", { type: "geojson", data: assets });
+      // Fit map to the substations (auto-center + auto-zoom)
+      const bbox = getGeoJSONBBox(substations);
+      if (bbox) {
+        map.fitBounds(bbox, { padding: 60, duration: 600 });
+      }
 
+      map.addSource("substations", { type: "geojson", data: substations });
+
+      // Glow layer (draw first, underneath)
       map.addLayer({
-        id: "assets-points",
+        id: "substations-glow",
         type: "circle",
-        source: "assets",
+        source: "substations",
         paint: {
-          "circle-radius": 6,
-          "circle-stroke-width": 1,
-          "circle-stroke-opacity": 0.4
+          "circle-radius": 16,
+          "circle-color": "#85C1E9",
+          "circle-blur": 0.8,
+          "circle-opacity": 0.18
         }
       });
 
-      map.on("click", "assets-points", (e) => {
+      // Main points layer
+      map.addLayer({
+        id: "substations-points",
+        type: "circle",
+        source: "substations",
+        paint: {
+          "circle-radius": 7,
+          "circle-color": "#7FB3D5",
+          "circle-opacity": 0.95,
+          "circle-stroke-color": "#FFFFFF",
+          "circle-stroke-width": 2,
+          "circle-stroke-opacity": 0.9
+        }
+      });
+
+      map.on("click", "substations-points", (e) => {
         const f = e.features?.[0];
         setSelectedProps((f?.properties as any) ?? null);
       });
 
-      map.on("mouseenter", "assets-points", () => (map.getCanvas().style.cursor = "pointer"));
-      map.on("mouseleave", "assets-points", () => (map.getCanvas().style.cursor = ""));
+      map.on("mouseenter", "substations-points", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "substations-points", () => (map.getCanvas().style.cursor = ""));
 
-      mapRef.current = map;
-
-      // Apply initial UI state now that the layer exists
-      map.setLayoutProperty(
-        "assets-points",
-        "visibility",
-        showAssets ? "visible" : "none"
-      );
+      // Apply initial UI state now that layers exist
+      const visibility = showSubstations ? "visible" : "none";
+      map.setLayoutProperty("substations-points", "visibility", visibility);
+      map.setLayoutProperty("substations-glow", "visibility", visibility);
     });
 
     mapRef.current = map;
@@ -126,35 +172,35 @@ export default function MapView() {
           <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <input
               type="checkbox"
-              checked={showAssets}
-              onChange={(e) => setShowAssets(e.target.checked)}
+              checked={showSubstations}
+              onChange={(e) => setShowSubstations(e.target.checked)}
             />
-            Assets (points)
+            Substations
           </label>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <input
-              type="checkbox"
-              checked={riskView}
-              onChange={(e) => setRiskView(e.target.checked)}
-            />
-            Risk view (uses “criticality”)
-          </label>
+          {showSubstations && (
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                type="checkbox"
+                checked={riskView}
+                onChange={(e) => setRiskView(e.target.checked)}
+              />
+              Risk view (styles by criticality)
+            </label>
+          )}
+
         </div>
 
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Legend</div>
           <div style={{ fontSize: 13, lineHeight: 1.4 }}>
-            <div><b>Assets</b>: points in territory</div>
+            <div><b>Substations</b>: points in the Bay Area</div>
             <div><b>Criticality</b>: 1 (low) → 5 (high)</div>
-            <div style={{ color: "#666", marginTop: 6 }}>
-              Tip: candidates can improve how this legend works + how risk is communicated.
-            </div>
           </div>
         </div>
 
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected feature</div>
+          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected substation</div>
           {!selectedProps ? (
             <div style={{ color: "#666" }}>Click a point to see details.</div>
           ) : (
@@ -174,9 +220,37 @@ export default function MapView() {
         </div>
 
         <div style={{ fontSize: 12, color: "#666" }}>
-          You can improve UX, clarity, and decision-support. No backend changes required.
+          Tip: candidates can improve legend clarity, filtering, search, and decision-support UX.
         </div>
       </div>
     </div>
   );
+}
+
+// Computes [minLng, minLat, maxLng, maxLat] for a GeoJSON FeatureCollection
+function getGeoJSONBBox(geojson: any): mapboxgl.LngLatBoundsLike | null {
+  const coords: Array<[number, number]> = [];
+
+  const pushCoord = (c: any) => {
+    if (Array.isArray(c) && typeof c[0] === "number" && typeof c[1] === "number") {
+      coords.push([c[0], c[1]]);
+    } else if (Array.isArray(c)) {
+      for (const item of c) pushCoord(item);
+    }
+  };
+
+  const features = geojson?.features ?? [];
+  for (const f of features) {
+    pushCoord(f?.geometry?.coordinates);
+  }
+  if (!coords.length) return null;
+
+  let minX = coords[0][0], minY = coords[0][1], maxX = coords[0][0], maxY = coords[0][1];
+  for (const [x, y] of coords) {
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
+  }
+  return [minX, minY, maxX, maxY];
 }
