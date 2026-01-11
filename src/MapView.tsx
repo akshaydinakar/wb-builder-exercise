@@ -12,37 +12,52 @@ export default function MapView() {
   const [showSubstations, setShowSubstations] = useState(true);
   const [riskView, setRiskView] = useState(false);
 
-  // Apply UI state to map after layers exist
+  // NEW: counties toggle
+  const [showCounties, setShowCounties] = useState(true);
+
+  // Keep UI state sane: if substations hidden, risk view should be off
   useEffect(() => {
     if (!showSubstations && riskView) {
       setRiskView(false);
     }
   }, [showSubstations, riskView]);
 
+  // Apply UI state to map after layers exist
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
-    const mainLayer = "substations-points";
-    const glowLayer = "substations-glow";
+    const subMain = "substations-points";
+    const subGlow = "substations-glow";
 
-    if (!map.getLayer(mainLayer) || !map.getLayer(glowLayer)) return;
+    const countyFill = "counties-fill";
+    const countyOutline = "counties-outline";
+
+    // Counties visibility (only if layers exist yet)
+    if (map.getLayer(countyFill) && map.getLayer(countyOutline)) {
+      const vis = showCounties ? "visible" : "none";
+      map.setLayoutProperty(countyFill, "visibility", vis);
+      map.setLayoutProperty(countyOutline, "visibility", vis);
+    }
+
+    // Substations visibility + styling (only if layers exist yet)
+    if (!map.getLayer(subMain) || !map.getLayer(subGlow)) return;
 
     const visibility = showSubstations ? "visible" : "none";
-    map.setLayoutProperty(mainLayer, "visibility", visibility);
-    map.setLayoutProperty(glowLayer, "visibility", visibility);
+    map.setLayoutProperty(subMain, "visibility", visibility);
+    map.setLayoutProperty(subGlow, "visibility", visibility);
 
     // Toggle styling mode (risk vs default)
     // Hook: "criticality" property (1-5)
     if (riskView) {
-      map.setPaintProperty(mainLayer, "circle-radius", [
+      map.setPaintProperty(subMain, "circle-radius", [
         "interpolate",
         ["linear"],
         ["coalesce", ["to-number", ["get", "criticality"]], 1],
         1, 6,
         5, 12
       ]);
-      map.setPaintProperty(mainLayer, "circle-color", [
+      map.setPaintProperty(subMain, "circle-color", [
         "interpolate",
         ["linear"],
         ["coalesce", ["to-number", ["get", "criticality"]], 1],
@@ -50,22 +65,22 @@ export default function MapView() {
         3, "#BB8FCE",
         5, "#E74C3C"
       ]);
-      map.setPaintProperty(glowLayer, "circle-radius", [
+      map.setPaintProperty(subGlow, "circle-radius", [
         "interpolate",
         ["linear"],
         ["coalesce", ["to-number", ["get", "criticality"]], 1],
         1, 12,
         5, 22
       ]);
-      map.setPaintProperty(glowLayer, "circle-opacity", 0.25);
+      map.setPaintProperty(subGlow, "circle-opacity", 0.25);
     } else {
       // Default mode: subtle sizing and consistent “clean” tone
-      map.setPaintProperty(mainLayer, "circle-radius", 7);
-      map.setPaintProperty(mainLayer, "circle-color", "#7FB3D5");
-      map.setPaintProperty(glowLayer, "circle-radius", 16);
-      map.setPaintProperty(glowLayer, "circle-opacity", 0.18);
+      map.setPaintProperty(subMain, "circle-radius", 7);
+      map.setPaintProperty(subMain, "circle-color", "#7FB3D5");
+      map.setPaintProperty(subGlow, "circle-radius", 16);
+      map.setPaintProperty(subGlow, "circle-opacity", 0.18);
     }
-  }, [showSubstations, riskView]);
+  }, [showSubstations, riskView, showCounties]);
 
   useEffect(() => {
     const token = import.meta.env.VITE_MAPBOX_TOKEN as string | undefined;
@@ -81,7 +96,7 @@ export default function MapView() {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/light-v11",
-      // We'll fit bounds after loading substations, so these are just placeholders
+      // We'll fit bounds after loading data, so these are just placeholders
       center: [-122.2, 37.7],
       zoom: 9,
     });
@@ -89,19 +104,60 @@ export default function MapView() {
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     map.on("load", async () => {
-      const res = await fetch("/data/substations.geojson");
-      if (!res.ok) throw new Error("Failed to load /data/substations.geojson");
-      const substations = await res.json();
+      // Load both datasets in parallel
+      const [countiesRes, substationsRes] = await Promise.all([
+        fetch("/data/counties.geojson"),
+        fetch("/data/substations.geojson"),
+      ]);
 
-      // Fit map to the substations (auto-center + auto-zoom)
-      const bbox = getGeoJSONBBox(substations);
+      if (!countiesRes.ok) throw new Error("Failed to load /data/counties.geojson");
+      if (!substationsRes.ok) throw new Error("Failed to load /data/substations.geojson");
+
+      const counties = await countiesRes.json();
+      const substations = await substationsRes.json();
+
+      // Fit bounds: prefer counties (bigger context), fallback to substations
+      const countiesBbox = getGeoJSONBBox(counties);
+      const substationsBbox = getGeoJSONBBox(substations);
+      const bbox = countiesBbox ?? substationsBbox;
       if (bbox) {
         map.fitBounds(bbox, { padding: 60, duration: 600 });
       }
 
+      // ----- Counties (polygons) -----
+      map.addSource("counties", { type: "geojson", data: counties });
+
+      // Fill goes underneath points
+      map.addLayer({
+        id: "counties-fill",
+        type: "fill",
+        source: "counties",
+        paint: {
+          "fill-color": "#5DADE2",
+          "fill-opacity": 0.08
+        }
+      });
+
+      map.addLayer({
+        id: "counties-outline",
+        type: "line",
+        source: "counties",
+        paint: {
+          "line-color": "#2E86C1",
+          "line-width": 1.5,
+          "line-opacity": 0.35
+        }
+      });
+
+      // Apply initial counties visibility
+      const countyVis = showCounties ? "visible" : "none";
+      map.setLayoutProperty("counties-fill", "visibility", countyVis);
+      map.setLayoutProperty("counties-outline", "visibility", countyVis);
+
+      // ----- Substations (points) -----
       map.addSource("substations", { type: "geojson", data: substations });
 
-      // Glow layer (draw first, underneath)
+      // Glow layer (draw first, underneath main points)
       map.addLayer({
         id: "substations-glow",
         type: "circle",
@@ -137,10 +193,10 @@ export default function MapView() {
       map.on("mouseenter", "substations-points", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "substations-points", () => (map.getCanvas().style.cursor = ""));
 
-      // Apply initial UI state now that layers exist
-      const visibility = showSubstations ? "visible" : "none";
-      map.setLayoutProperty("substations-points", "visibility", visibility);
-      map.setLayoutProperty("substations-glow", "visibility", visibility);
+      // Apply initial substations visibility
+      const subVis = showSubstations ? "visible" : "none";
+      map.setLayoutProperty("substations-points", "visibility", subVis);
+      map.setLayoutProperty("substations-glow", "visibility", subVis);
     });
 
     mapRef.current = map;
@@ -169,6 +225,16 @@ export default function MapView() {
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Layers</div>
 
+          {/* NEW: counties toggle */}
+          <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <input
+              type="checkbox"
+              checked={showCounties}
+              onChange={(e) => setShowCounties(e.target.checked)}
+            />
+            Counties (polygons)
+          </label>
+
           <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <input
               type="checkbox"
@@ -188,12 +254,12 @@ export default function MapView() {
               Risk view (styles by criticality)
             </label>
           )}
-
         </div>
 
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Legend</div>
           <div style={{ fontSize: 13, lineHeight: 1.4 }}>
+            <div><b>Counties</b>: placeholder polygons around the Bay Area</div>
             <div><b>Substations</b>: points in the Bay Area</div>
             <div><b>Criticality</b>: 1 (low) → 5 (high)</div>
           </div>
