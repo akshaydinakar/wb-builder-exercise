@@ -254,7 +254,7 @@ map.addLayer({
           fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         }}
       >
-        <div style={{ fontWeight: 700, marginBottom: 10 }}>Exercise Panel</div>
+        <div style={{ fontWeight: 700, marginBottom: 10 }}>Info Panel</div>
 
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Layers</div>
@@ -284,24 +284,15 @@ map.addLayer({
                 checked={riskView}
                 onChange={(e) => setRiskView(e.target.checked)}
               />
-              Risk view (styles by criticality)
+              Style substations by criticality
             </label>
           )}
         </div>
 
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Legend</div>
-          <div style={{ fontSize: 13, lineHeight: 1.4 }}>
-            <div><b>Counties</b>: Bay Area counties</div>
-            <div><b>Substations</b>: points in the Bay Area</div>
-            <div><b>Criticality</b>: 1 (low) → 5 (high)</div>
-          </div>
-        </div>
-
-        <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected county</div>
           {!selectedCountyName ? (
-            <div style={{ color: "#666" }}>Click a county polygon to see its name.</div>
+            <div style={{ color: "#666" }}>Click a county to see its name.</div>
           ) : (
             <div style={{ fontWeight: 600 }}>{selectedCountyName}</div>
           )}
@@ -310,7 +301,7 @@ map.addLayer({
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected substation</div>
           {!selectedProps ? (
-            <div style={{ color: "#666" }}>Click a point to see details.</div>
+            <div style={{ color: "#666" }}>Click a substation to see its details.</div>
           ) : (
             <pre
               style={{
@@ -325,10 +316,6 @@ map.addLayer({
               {JSON.stringify(selectedProps, null, 2)}
             </pre>
           )}
-        </div>
-
-        <div style={{ fontSize: 12, color: "#666" }}>
-          Tip: candidates can improve legend clarity, filtering, search, and decision-support UX.
         </div>
       </div>
     </div>
