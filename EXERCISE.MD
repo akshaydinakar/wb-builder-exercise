@@ -1,9 +1,21 @@
-## Mapbox token
+# Product Engineer Builder Exercise (Frontend)
 
-This project requires a Mapbox public token.
+Timebox: ~3 hours (LLMs allowed)
 
-Create a file named `.env.local` in the project root and add:
+## Goal
+Make at least 2 concrete UI changes that unlock new value for an operator using this map-based interface.
 
-VITE_MAPBOX_TOKEN=pk.XXXXXXXXXXXXXXXX
+## Setup (Browser-only)
+1) Open this repo in GitHub Codespaces
+2) Create a file named `.env.local` in the repo root:
+   VITE_MAPBOX_TOKEN=pk.XXXXXXXX
+   (We will provide the token — no Mapbox account required.)
+3) Run: `npm run dev`
+4) Open the forwarded port preview
 
-(We’ll provide the token directly — no Mapbox account required.)
+## Deliverable
+- Open a PR with your changes
+- In the PR description, include:
+  - what you changed (2+ things)
+  - why it matters (what decision/action it supports)
+  - what you’d do next with more time

@@ -1,0 +1,10 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "properties": { "name": "Substation A", "type": "substation", "criticality": 5 }, "geometry": { "type": "Point", "coordinates": [-122.4194, 37.7749] } },
+    { "type": "Feature", "properties": { "name": "Substation B", "type": "substation", "criticality": 3 }, "geometry": { "type": "Point", "coordinates": [-121.8863, 37.3382] } },
+    { "type": "Feature", "properties": { "name": "Feeder C", "type": "feeder", "criticality": 2 }, "geometry": { "type": "Point", "coordinates": [-118.2437, 34.0522] } },
+    { "type": "Feature", "properties": { "name": "Pole Cluster D", "type": "poles", "criticality": 1 }, "geometry": { "type": "Point", "coordinates": [-122.3321, 47.6062] } },
+    { "type": "Feature", "properties": { "name": "Substation E", "type": "substation", "criticality": 4 }, "geometry": { "type": "Point", "coordinates": [-73.9352, 40.7306] } }
+  ]
+}
