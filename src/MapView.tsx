@@ -9,10 +9,11 @@ export default function MapView() {
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
   const [selectedProps, setSelectedProps] = useState<Props>(null);
+  const [selectedCountyName, setSelectedCountyName] = useState<string | null>(null);
+
   const [showSubstations, setShowSubstations] = useState(true);
   const [riskView, setRiskView] = useState(false);
 
-  // NEW: counties toggle
   const [showCounties, setShowCounties] = useState(true);
 
   // Keep UI state sane: if substations hidden, risk view should be off
@@ -74,7 +75,6 @@ export default function MapView() {
       ]);
       map.setPaintProperty(subGlow, "circle-opacity", 0.25);
     } else {
-      // Default mode: subtle sizing and consistent “clean” tone
       map.setPaintProperty(subMain, "circle-radius", 7);
       map.setPaintProperty(subMain, "circle-color", "#7FB3D5");
       map.setPaintProperty(subGlow, "circle-radius", 16);
@@ -96,7 +96,6 @@ export default function MapView() {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/light-v11",
-      // We'll fit bounds after loading data, so these are just placeholders
       center: [-122.2, 37.7],
       zoom: 9,
     });
@@ -104,17 +103,21 @@ export default function MapView() {
     map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     map.on("load", async () => {
-      // Load both datasets in parallel
-      const [countiesRes, substationsRes] = await Promise.all([
+      const [countiesRes, substationsRes, linesRes] = await Promise.all([
         fetch("/data/counties.geojson"),
         fetch("/data/substations.geojson"),
+        fetch("/data/transmission_lines.geojson")
       ]);
 
       if (!countiesRes.ok) throw new Error("Failed to load /data/counties.geojson");
       if (!substationsRes.ok) throw new Error("Failed to load /data/substations.geojson");
+      if (!linesRes.ok) throw new Error("Failed to load /data/transmission_lines.geojson");
+
 
       const counties = await countiesRes.json();
       const substations = await substationsRes.json();
+      const lines = await linesRes.json();
+
 
       // Fit bounds: prefer counties (bigger context), fallback to substations
       const countiesBbox = getGeoJSONBBox(counties);
@@ -127,14 +130,13 @@ export default function MapView() {
       // ----- Counties (polygons) -----
       map.addSource("counties", { type: "geojson", data: counties });
 
-      // Fill goes underneath points
       map.addLayer({
         id: "counties-fill",
         type: "fill",
         source: "counties",
         paint: {
-          "fill-color": "#5DADE2",
-          "fill-opacity": 0.08
+          "fill-color": "#401370",
+          "fill-opacity": 0.06
         }
       });
 
@@ -143,42 +145,72 @@ export default function MapView() {
         type: "line",
         source: "counties",
         paint: {
-          "line-color": "#2E86C1",
+          "line-color": "#7720f1",
           "line-width": 1.5,
-          "line-opacity": 0.35
+          "line-opacity": 0.75
         }
       });
+
+      // County click handler: show county name in panel
+      map.on("click", "counties-fill", (e) => {
+        const f = e.features?.[0];
+        const props = (f?.properties as any) ?? {};
+        const name = props.county ?? props.name ?? props.NAME ?? props.county_name ?? null;
+        setSelectedCountyName(name);
+        // Optional: clear substation selection when clicking a county
+        // setSelectedProps(null);
+      });
+
+      map.on("mouseenter", "counties-fill", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "counties-fill", () => (map.getCanvas().style.cursor = ""));
 
       // Apply initial counties visibility
       const countyVis = showCounties ? "visible" : "none";
       map.setLayoutProperty("counties-fill", "visibility", countyVis);
       map.setLayoutProperty("counties-outline", "visibility", countyVis);
 
+      // ----- Transmission lines (lines) -----
+map.addSource("transmission-lines", { type: "geojson", data: lines });
+
+map.addLayer({
+  id: "transmission-lines",
+  type: "line",
+  source: "transmission-lines",
+  layout: {
+    "line-join": "round",
+    "line-cap": "round"
+  },
+  paint: {
+    "line-color": "#ff4d00",
+    "line-width": 1.00,
+    "line-opacity": 0.75
+  }
+});
+
+
       // ----- Substations (points) -----
       map.addSource("substations", { type: "geojson", data: substations });
 
-      // Glow layer (draw first, underneath main points)
       map.addLayer({
         id: "substations-glow",
         type: "circle",
         source: "substations",
         paint: {
           "circle-radius": 16,
-          "circle-color": "#85C1E9",
+          "circle-color": "#ac4ae1",
           "circle-blur": 0.8,
           "circle-opacity": 0.18
         }
       });
 
-      // Main points layer
       map.addLayer({
         id: "substations-points",
         type: "circle",
         source: "substations",
         paint: {
-          "circle-radius": 7,
-          "circle-color": "#7FB3D5",
-          "circle-opacity": 0.95,
+          "circle-radius": 5,
+          "circle-color": "#7720f1",
+          "circle-opacity": 0.75,
           "circle-stroke-color": "#FFFFFF",
           "circle-stroke-width": 2,
           "circle-stroke-opacity": 0.9
@@ -188,6 +220,8 @@ export default function MapView() {
       map.on("click", "substations-points", (e) => {
         const f = e.features?.[0];
         setSelectedProps((f?.properties as any) ?? null);
+        // Optional: clear county selection when clicking a substation
+        // setSelectedCountyName(null);
       });
 
       map.on("mouseenter", "substations-points", () => (map.getCanvas().style.cursor = "pointer"));
@@ -225,7 +259,6 @@ export default function MapView() {
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Layers</div>
 
-          {/* NEW: counties toggle */}
           <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
             <input
               type="checkbox"
@@ -259,10 +292,19 @@ export default function MapView() {
         <div style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Legend</div>
           <div style={{ fontSize: 13, lineHeight: 1.4 }}>
-            <div><b>Counties</b>: placeholder polygons around the Bay Area</div>
+            <div><b>Counties</b>: Bay Area counties</div>
             <div><b>Substations</b>: points in the Bay Area</div>
             <div><b>Criticality</b>: 1 (low) → 5 (high)</div>
           </div>
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected county</div>
+          {!selectedCountyName ? (
+            <div style={{ color: "#666" }}>Click a county polygon to see its name.</div>
+          ) : (
+            <div style={{ fontWeight: 600 }}>{selectedCountyName}</div>
+          )}
         </div>
 
         <div style={{ marginBottom: 14 }}>

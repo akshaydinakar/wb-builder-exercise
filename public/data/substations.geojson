@@ -1,7 +1,12 @@
 {
   "type": "FeatureCollection",
   "name": "bay_area_substations",
-  "crs": { "type": "name", "properties": { "name": "EPSG:4326" } },
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:4326"
+    }
+  },
   "features": [
     {
       "type": "Feature",
@@ -13,7 +18,13 @@
         "criticality": 5,
         "operator_zone": "SF Peninsula"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.4194, 37.7749] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4194,
+          37.7749
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -25,7 +36,13 @@
         "criticality": 4,
         "operator_zone": "SF Peninsula"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.4477, 37.7689] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4477,
+          37.7689
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -37,7 +54,13 @@
         "criticality": 3,
         "operator_zone": "SF Peninsula"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.3929, 37.7924] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.3929,
+          37.7924
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -49,7 +72,13 @@
         "criticality": 2,
         "operator_zone": "SF Peninsula"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.4366, 37.7432] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4366,
+          37.7432
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -61,9 +90,14 @@
         "criticality": 1,
         "operator_zone": "SF Peninsula"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.4037, 37.7341] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4037,
+          37.7341
+        ]
+      }
     },
-
     {
       "type": "Feature",
       "id": "S-006",
@@ -74,7 +108,13 @@
         "criticality": 4,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.2711, 37.8044] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.2711,
+          37.8044
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -86,7 +126,13 @@
         "criticality": 3,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.2420, 37.7763] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.2420,
+          37.7763
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -98,7 +144,13 @@
         "criticality": 5,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.2585, 37.8708] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.2585,
+          37.8708
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -110,7 +162,13 @@
         "criticality": 2,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.2860, 37.8716] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.2860,
+          37.8716
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -122,7 +180,13 @@
         "criticality": 1,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.2940, 37.7897] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.2940,
+          37.7897
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -134,7 +198,13 @@
         "criticality": 4,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.1608, 37.7219] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.1608,
+          37.7219
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -146,7 +216,13 @@
         "criticality": 3,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-121.9886, 37.5485] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9886,
+          37.5485
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -158,9 +234,14 @@
         "criticality": 2,
         "operator_zone": "East Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.0864, 37.6688] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0864,
+          37.6688
+        ]
+      }
     },
-
     {
       "type": "Feature",
       "id": "S-014",
@@ -171,7 +252,13 @@
         "criticality": 5,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-121.8863, 37.3382] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.8863,
+          37.3382
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -183,7 +270,13 @@
         "criticality": 4,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-121.8947, 37.3639] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.8947,
+          37.3639
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -195,7 +288,13 @@
         "criticality": 3,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-121.9552, 37.3541] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9552,
+          37.3541
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -207,7 +306,13 @@
         "criticality": 2,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.0308, 37.3318] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0308,
+          37.3318
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -219,7 +324,13 @@
         "criticality": 1,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.0375, 37.3688] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0375,
+          37.3688
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -231,7 +342,13 @@
         "criticality": 5,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.1430, 37.4419] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.1430,
+          37.4419
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -243,9 +360,14 @@
         "criticality": 3,
         "operator_zone": "South Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-121.9990, 37.2890] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9990,
+          37.2890
+        ]
+      }
     },
-
     {
       "type": "Feature",
       "id": "S-021",
@@ -256,7 +378,13 @@
         "criticality": 4,
         "operator_zone": "North Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.7144, 38.4405] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.7144,
+          38.4405
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -268,7 +396,13 @@
         "criticality": 2,
         "operator_zone": "North Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.6590, 38.2919] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.6590,
+          38.2919
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -280,7 +414,13 @@
         "criticality": 1,
         "operator_zone": "North Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.5569, 38.1114] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.5569,
+          38.1114
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -292,7 +432,13 @@
         "criticality": 3,
         "operator_zone": "North Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.5275, 38.0126] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.5275,
+          38.0126
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -304,8 +450,373 @@
         "criticality": 5,
         "operator_zone": "North Bay"
       },
-      "geometry": { "type": "Point", "coordinates": [-122.4580, 38.0586] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4580,
+          38.0586
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-026",
+      "properties": {
+        "asset_id": "S-026",
+        "name": "Bay Substation 26",
+        "asset_type": "substation",
+        "criticality": 4,
+        "operator_zone": "North Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.8060,
+          38.5240
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-027",
+      "properties": {
+        "asset_id": "S-027",
+        "name": "Bay Substation 27",
+        "asset_type": "substation",
+        "criticality": 2,
+        "operator_zone": "North Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.9120,
+          38.4390
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-028",
+      "properties": {
+        "asset_id": "S-028",
+        "name": "Bay Substation 28",
+        "asset_type": "substation",
+        "criticality": 3,
+        "operator_zone": "North Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.5880,
+          38.2500
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-029",
+      "properties": {
+        "asset_id": "S-029",
+        "name": "Bay Substation 29",
+        "asset_type": "substation",
+        "criticality": 5,
+        "operator_zone": "North Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4660,
+          38.5100
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-030",
+      "properties": {
+        "asset_id": "S-030",
+        "name": "Bay Substation 30",
+        "asset_type": "substation",
+        "criticality": 1,
+        "operator_zone": "North Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.2730,
+          38.1040
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-031",
+      "properties": {
+        "asset_id": "S-031",
+        "name": "Bay Substation 31",
+        "asset_type": "substation",
+        "criticality": 4,
+        "operator_zone": "SF Peninsula"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4780,
+          37.8950
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-032",
+      "properties": {
+        "asset_id": "S-032",
+        "name": "Bay Substation 32",
+        "asset_type": "substation",
+        "criticality": 2,
+        "operator_zone": "SF Peninsula"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4820,
+          37.6520
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-033",
+      "properties": {
+        "asset_id": "S-033",
+        "name": "Bay Substation 33",
+        "asset_type": "substation",
+        "criticality": 3,
+        "operator_zone": "SF Peninsula"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4290,
+          37.5130
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-034",
+      "properties": {
+        "asset_id": "S-034",
+        "name": "Bay Substation 34",
+        "asset_type": "substation",
+        "criticality": 5,
+        "operator_zone": "SF Peninsula"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.3060,
+          37.5640
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-035",
+      "properties": {
+        "asset_id": "S-035",
+        "name": "Bay Substation 35",
+        "asset_type": "substation",
+        "criticality": 1,
+        "operator_zone": "SF Peninsula"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.4130,
+          37.6050
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-036",
+      "properties": {
+        "asset_id": "S-036",
+        "name": "Bay Substation 36",
+        "asset_type": "substation",
+        "criticality": 4,
+        "operator_zone": "South Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9510,
+          37.5480
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-037",
+      "properties": {
+        "asset_id": "S-037",
+        "name": "Bay Substation 37",
+        "asset_type": "substation",
+        "criticality": 2,
+        "operator_zone": "South Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9000,
+          37.6790
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-038",
+      "properties": {
+        "asset_id": "S-038",
+        "name": "Bay Substation 38",
+        "asset_type": "substation",
+        "criticality": 3,
+        "operator_zone": "South Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7740,
+          37.5950
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-039",
+      "properties": {
+        "asset_id": "S-039",
+        "name": "Bay Substation 39",
+        "asset_type": "substation",
+        "criticality": 5,
+        "operator_zone": "South Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0100,
+          37.4690
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-040",
+      "properties": {
+        "asset_id": "S-040",
+        "name": "Bay Substation 40",
+        "asset_type": "substation",
+        "criticality": 1,
+        "operator_zone": "South Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.7350,
+          37.3150
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-041",
+      "properties": {
+        "asset_id": "S-041",
+        "name": "Bay Substation 41",
+        "asset_type": "substation",
+        "criticality": 4,
+        "operator_zone": "East Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0320,
+          37.9760
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-042",
+      "properties": {
+        "asset_id": "S-042",
+        "name": "Bay Substation 42",
+        "asset_type": "substation",
+        "criticality": 2,
+        "operator_zone": "East Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.1430,
+          37.9100
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-043",
+      "properties": {
+        "asset_id": "S-043",
+        "name": "Bay Substation 43",
+        "asset_type": "substation",
+        "criticality": 3,
+        "operator_zone": "East Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9340,
+          37.7020
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-044",
+      "properties": {
+        "asset_id": "S-044",
+        "name": "Bay Substation 44",
+        "asset_type": "substation",
+        "criticality": 5,
+        "operator_zone": "East Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.8890,
+          37.3360
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "S-045",
+      "properties": {
+        "asset_id": "S-045",
+        "name": "Bay Substation 45",
+        "asset_type": "substation",
+        "criticality": 1,
+        "operator_zone": "East Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.6440,
+          37.9570
+        ]
+      }
     }
   ]
 }
-
