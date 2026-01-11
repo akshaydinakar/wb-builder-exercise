@@ -3,11 +3,11 @@
 Recommended Time Allocation: ~2-3 hours (Use of LLMs is encouraged)
 
 ## Instructions
-You are designing a digital twin of the PG&E service territory to help utility operators gain clearer, more actionable visibility into the health and risk profiles of their assets / infrastructure.
+You are building a "digital twin" for **California Power** (a fictional Utility company), to help their Grid Operations team gain clearer, more actionable visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.).
 
-Your team has built an initial prototype: a map that displays several data layers (substations, transmission lines, county boundaries) with basic styling, along with an interactive info card. While functional, this experience is intentionally minimal and leaves significant room for improvement / feature expansion.
+Your team has built an initial prototype: a map + info card that displays several data layers (substations, transmission lines, county boundaries) with basic styling. While functional, this experience is intentionally minimal and leaves significant room for improvement / feature expansion.
 
-Your task is to extend this prototype with the holistic design goal of improving operational visibility and decision-making around asset health and risk.
+Your task is to extend this prototype with the holistic design goal of improving operational visibility and decision-making around service territory health and risk.
 
 Specifically, you are asked to:
 1) Implement at least two frontend/UI changes that meaningfully improve the user’s ability to interpret, compare, or act on the existing data.
@@ -20,13 +20,13 @@ Once you are satisfied with your changes, submit a pull request.
 - Keep changes frontend-only (no backend work required)
 - Submit your work as a pull request
 - In the pull request description, include:
-  - What you changed (2+ items)
-  - Why it matters (what decision/action it supports)
-  - What you’d do next with more time
+  - What you changed
+  - Why these changes matter 
+  - What you’d do with more time
 
 ## Getting Started
 1) Fork this repository.
-2) Open the repo in GitHub Codespaces.
+2) Open the repository in GitHub Codespaces (where you can directly edit / test code changes).
 3) Create a file named `.env.local` in the repository, and add the Mapbox token provided in the emailed instructions:
    VITE_MAPBOX_TOKEN=pk.XXXXXXXX
 4) Open the built-in Terminal and run the application: `npm run dev`
