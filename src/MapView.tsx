@@ -223,7 +223,7 @@ export default function MapView() {
         type: "fill",
         source: "counties",
         paint: {
-          "fill-color": "#401370",
+          "fill-color": "#fff700",
           "fill-opacity": 0.06,
         },
       });
