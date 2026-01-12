@@ -3,7 +3,7 @@
 Recommended Time Allocation: ~2-3 hours (Use of LLMs is encouraged)
 
 ## Instructions
-You are building a "digital twin" for **California Power** (a fictional Utility company), to help their team gain clearer visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.).
+You are building a "digital twin" for **California Power** (a fictional Utility company), to help their team gain clearer visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.). 
 
 Your team has built an initial prototype: an interactive map + info card that displays several data layers (substations, transmission lines, county boundaries) with basic styling. While functional, this experience is intentionally minimal and leaves significant room for improvement / feature expansion.
 
@@ -18,22 +18,26 @@ Once you are satisfied with your changes, submit a pull request.
 
 ## Requirements
 - Keep changes frontend-only (no backend work required)
-- Submit your work as a pull request
-- In the pull request description, include:
+- Email your submission as a ZIP file.
+- Along with your submission, include notes on the following:
   - What you changed
   - Why these changes matter 
   - What you’d do with more time
 
 ## Getting Started
-1) Fork this repository.
-2) Open the repository in GitHub Codespaces (where you can directly edit / test code changes).
-3) Create a file named `.env.local` in the repository, and add the Mapbox token provided in the emailed instructions:
+1) Install core development tools on your device (CLI commands below):
+  - Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)`
+  - Git: `brew install git`
+  - Node.js: `brew install node`
+2) Download/install Cursor: https://cursor.com/download
+3) Clone this repository.
+4) Create a file named `.env.local` in the repository, and add the Mapbox token provided in the emailed instructions:
    VITE_MAPBOX_TOKEN=pk.XXXXXXXX
-4) Open the built-in Terminal and type this command to run the application: `npm run dev`
-5) Make any code changes you see fit. Good luck!
+5) Type this command to run the application: `npm run dev`
+6) Make any code changes you see fit. Good luck!
 
 ## Some Ideas...
-- Visualize a relevant asset attribute in a more intuitive or actionable way
+- Visualize an asset attribute in a more intuitive or actionable way
 - Aggregate individual data-points in a way that surfaces higher-level operational insight
 - Add filters, search, or comparison to reduce cognitive load
 - Improve asset styling on the map to better communicate priority or risk
