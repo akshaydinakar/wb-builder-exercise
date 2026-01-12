@@ -380,7 +380,7 @@ export default function MapView() {
   }, [showCounties, showSubstations]);
 
   /**
-   * If Mapbox token is missing, show a friendly in-app message with setup instructions.
+   * If Mapbox token is missing, show an in-app message with setup instructions.
    */
   if (missingMapboxToken) {
     return (
@@ -414,30 +414,6 @@ export default function MapView() {
               .env.local
             </span>{" "}
             and restart the dev server (or reload the Codespace).
-          </div>
-
-          <div style={{ marginTop: 12, fontSize: 12, color: "#666" }}>Example:</div>
-          <pre
-            style={{
-              marginTop: 8,
-              fontSize: 12,
-              whiteSpace: "pre-wrap",
-              background: "#fafafa",
-              border: "1px solid #eee",
-              borderRadius: 10,
-              padding: 10,
-              overflowX: "auto",
-            }}
-          >
-{`VITE_MAPBOX_TOKEN=pk.eyJ1Ijoi...your_token_here...`}
-          </pre>
-
-          <div style={{ marginTop: 10, fontSize: 12, color: "#666", lineHeight: 1.45 }}>
-            Tip: For this exercise, a public token is fine. Avoid committing real secrets—keep{" "}
-            <span style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
-              .env.local
-            </span>{" "}
-            out of git.
           </div>
         </div>
       </div>
@@ -561,26 +537,6 @@ export default function MapView() {
                 <DetailRow label="Operator zone" value={selectedProps.operator_zone ?? "—"} />
                 <DetailRow label="Asset type" value={selectedProps.asset_type ?? "—"} />
               </div>
-
-              {/* Expandable raw JSON for debugging / learning */}
-              <details style={{ marginTop: 10 }}>
-                <summary style={{ fontSize: 12, color: "#666", cursor: "pointer" }}>
-                  View raw properties
-                </summary>
-                <pre
-                  style={{
-                    marginTop: 8,
-                    fontSize: 12,
-                    whiteSpace: "pre-wrap",
-                    background: "#fafafa",
-                    border: "1px solid #eee",
-                    borderRadius: 10,
-                    padding: 10,
-                  }}
-                >
-                  {JSON.stringify(selectedProps, null, 2)}
-                </pre>
-              </details>
             </div>
           )}
         </div>

@@ -3,11 +3,11 @@
 Recommended Time Allocation: ~2-3 hours (Use of LLMs is encouraged)
 
 ## Instructions
-You are building a "digital twin" for **California Power** (a fictional Utility company), to help their Grid Operations team gain clearer visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.).
+You are building a "digital twin" for **California Power** (a fictional Utility company), to help their team gain clearer visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.).
 
 Your team has built an initial prototype: an interactive map + info card that displays several data layers (substations, transmission lines, county boundaries) with basic styling. While functional, this experience is intentionally minimal and leaves significant room for improvement / feature expansion.
 
-Your task is to extend this prototype, with the holistic goal of improving visibility and decision-making around service territory health and risk.
+Your task is to extend this prototype, with the holistic goal of improving operational visibility and decision-making around service territory health and risk.
 
 Specifically, you are asked to:
 1) Implement at least two frontend/UI changes that meaningfully improve the user’s ability to interpret, compare, or act on the existing data.
