@@ -3,11 +3,11 @@
 Recommended Time Allocation: ~2-3 hours (Use of LLMs is encouraged)
 
 ## Instructions
-You are building a "digital twin" for **California Power** (a fictional Utility company), to help their Grid Operations team gain clearer, more actionable visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.).
+You are building a "digital twin" for **California Power** (a fictional Utility company), to help their Grid Operations team gain clearer visibility into the current risk profile of their service territory (e.g. assets, infrastructure, vegetation, customers, natural hazards, etc.).
 
-Your team has built an initial prototype: a map + info card that displays several data layers (substations, transmission lines, county boundaries) with basic styling. While functional, this experience is intentionally minimal and leaves significant room for improvement / feature expansion.
+Your team has built an initial prototype: an interactive map + info card that displays several data layers (substations, transmission lines, county boundaries) with basic styling. While functional, this experience is intentionally minimal and leaves significant room for improvement / feature expansion.
 
-Your task is to extend this prototype with the holistic design goal of improving operational visibility and decision-making around service territory health and risk.
+Your task is to extend this prototype, with the holistic goal of improving visibility and decision-making around service territory health and risk.
 
 Specifically, you are asked to:
 1) Implement at least two frontend/UI changes that meaningfully improve the user’s ability to interpret, compare, or act on the existing data.
@@ -29,12 +29,12 @@ Once you are satisfied with your changes, submit a pull request.
 2) Open the repository in GitHub Codespaces (where you can directly edit / test code changes).
 3) Create a file named `.env.local` in the repository, and add the Mapbox token provided in the emailed instructions:
    VITE_MAPBOX_TOKEN=pk.XXXXXXXX
-4) Open the built-in Terminal and run the application: `npm run dev`
+4) Open the built-in Terminal and type this command to run the application: `npm run dev`
 5) Make any code changes you see fit. Good luck!
 
 ## Some Ideas...
 - Visualize a relevant asset attribute in a more intuitive or actionable way
-- Aggregate data to surface higher-level operational insight
+- Aggregate individual data-points in a way that surfaces higher-level operational insight
 - Add filters, search, or comparison to reduce cognitive load
 - Improve asset styling on the map to better communicate priority or risk
 - Make the info panel more decision-oriented (key fields, hierarchy, grouping)
