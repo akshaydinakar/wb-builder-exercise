@@ -27,6 +27,13 @@ export default function MapView() {
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
   /**
+   * Mapbox token UX:
+   * If a candidate hasn't provided VITE_MAPBOX_TOKEN, we show an in-app message
+   * instead of a blank page + console errors.
+   */
+  const [missingMapboxToken, setMissingMapboxToken] = useState(false);
+
+  /**
    * Info panel selection state:
    * - selectedProps: properties of a clicked substation feature
    * - selectedCountyName: name of a clicked county polygon
@@ -85,7 +92,6 @@ export default function MapView() {
 
     // If riskView is on, override the default styling based on a data property: criticality (1-5).
     if (riskView) {
-
       // Main circle radius grows as criticality increases.
       map.setPaintProperty(subMain, "circle-radius", [
         "interpolate",
@@ -151,14 +157,20 @@ export default function MapView() {
    * 3) Set up click/hover handlers to drive the Info Panel.
    * 4) Clean up the map on unmount (important to avoid memory leaks).
    */
-
   useEffect(() => {
     // Mapbox token comes from Vite env vars (VITE_* is exposed to the browser bundle).
     const token = import.meta.env.VITE_MAPBOX_TOKEN as string | undefined;
-    if (!token) {
+
+    // NEW: show an in-app error message if the token is missing
+    if (!token || token.trim().length === 0) {
+      setMissingMapboxToken(true);
       console.error("Missing VITE_MAPBOX_TOKEN in .env.local");
       return;
     }
+
+    // If we DO have a token, ensure the “missing token” message is not shown.
+    setMissingMapboxToken(false);
+
     mapboxgl.accessToken = token;
 
     // If the container div doesn't exist yet, we can't create the map.
@@ -252,8 +264,7 @@ export default function MapView() {
         const props = (f?.properties as any) ?? {};
 
         // Different datasets might store the county name under different keys.
-        const name =
-          props.county ?? props.name ?? props.NAME ?? props.county_name ?? null;
+        const name = props.county ?? props.name ?? props.NAME ?? props.county_name ?? null;
 
         setSelectedCountyName(name);
         setSelectedProps(null);
@@ -366,7 +377,72 @@ export default function MapView() {
 
     // We intentionally run once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showCounties, showSubstations]);
+
+  /**
+   * If Mapbox token is missing, show a friendly in-app message with setup instructions.
+   */
+  if (missingMapboxToken) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          width: "100vw",
+          height: "100vh",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 24,
+          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+          background: "#fafafa",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: 520,
+            width: "100%",
+            background: "white",
+            border: "1px solid #eee",
+            borderRadius: 14,
+            padding: 18,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+          }}
+        >
+          <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>Mapbox token required</div>
+          <div style={{ color: "#555", fontSize: 13, lineHeight: 1.45 }}>
+            This app needs a Mapbox access token to render the map. Please add a token to{" "}
+            <span style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+              .env.local
+            </span>{" "}
+            and restart the dev server (or reload the Codespace).
+          </div>
+
+          <div style={{ marginTop: 12, fontSize: 12, color: "#666" }}>Example:</div>
+          <pre
+            style={{
+              marginTop: 8,
+              fontSize: 12,
+              whiteSpace: "pre-wrap",
+              background: "#fafafa",
+              border: "1px solid #eee",
+              borderRadius: 10,
+              padding: 10,
+              overflowX: "auto",
+            }}
+          >
+{`VITE_MAPBOX_TOKEN=pk.eyJ1Ijoi...your_token_here...`}
+          </pre>
+
+          <div style={{ marginTop: 10, fontSize: 12, color: "#666", lineHeight: 1.45 }}>
+            Tip: For this exercise, a public token is fine. Avoid committing real secrets—keep{" "}
+            <span style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+              .env.local
+            </span>{" "}
+            out of git.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   /**
    * Render:
@@ -458,7 +534,12 @@ export default function MapView() {
             >
               {/* Card header: name + asset id + a badge */}
               <div
-                style={{ display: "flex", justifyContent: "space-between", gap: 10, marginBottom: 10 }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  marginBottom: 10,
+                }}
               >
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
@@ -529,8 +610,7 @@ function DetailRow({ label, value }: { label: string; value: any }) {
 function CriticalityBadge({ value }: { value: number }) {
   const v = Number.isFinite(value) ? Math.max(1, Math.min(5, value)) : 1;
 
-  // Color mapping (comment says “purple theme”, but these look like a green->red ramp).
-  // Feel free to rename/comment this as “severity ramp” if that’s the intent.
+  // A simple severity ramp (tweak freely)
   const bg =
     v >= 5 ? "#cd7875" : // high criticality
     v === 4 ? "#d9aa1c" :
@@ -538,9 +618,8 @@ function CriticalityBadge({ value }: { value: number }) {
     v === 2 ? "#dff65c" :
               "#b5fdc8"; // low criticality
 
-  // Text color (this expression currently always returns "#1f2937" because v <= 6 is always true).
-  // If you intended “white text for dark backgrounds”, you might change this condition later.
-  const fg = v <= 6 ? "#1f2937" : "#ffffff";
+  // Make text white for darker backgrounds, dark for lighter.
+  const fg = v >= 4 ? "#ffffff" : "#1f2937";
 
   return (
     <div
@@ -566,27 +645,10 @@ function CriticalityBadge({ value }: { value: number }) {
  *
  * Mapbox fitBounds expects bounds in the form:
  * [minLng, minLat, maxLng, maxLat]
- *
- * This function:
- * - Walks through every feature geometry
- * - Collects every [lng, lat] coordinate it can find
- * - Computes the min/max longitude + latitude
  */
 function getGeoJSONBBox(geojson: any): mapboxgl.LngLatBoundsLike | null {
   const coords: Array<[number, number]> = [];
 
-  /**
-   * pushCoord recursively walks nested coordinate arrays.
-   * GeoJSON coordinates can be deeply nested:
-   * - Point: [lng, lat]
-   * - LineString: [[lng, lat], [lng, lat], ...]
-   * - Polygon: [[[lng, lat], ...]] (one array per ring)
-   * - MultiPolygon: [[[[lng, lat], ...]]]
-   *
-   * This helper says:
-   * - If it looks like [number, number], treat it as a coordinate pair
-   * - Else if it's an array, recurse deeper
-   */
   const pushCoord = (c: any) => {
     if (Array.isArray(c) && typeof c[0] === "number" && typeof c[1] === "number") {
       coords.push([c[0], c[1]]);
@@ -599,15 +661,13 @@ function getGeoJSONBBox(geojson: any): mapboxgl.LngLatBoundsLike | null {
   for (const f of features) {
     pushCoord(f?.geometry?.coordinates);
   }
-  if (!coords.length) return null; // No coordinates found (empty FeatureCollection, etc.)
+  if (!coords.length) return null;
 
-  // Initialize min/max with the first coordinate.
   let minX = coords[0][0],
     minY = coords[0][1],
     maxX = coords[0][0],
     maxY = coords[0][1];
 
-  // Expand bounds by scanning every coordinate.
   for (const [x, y] of coords) {
     minX = Math.min(minX, x);
     minY = Math.min(minY, y);
