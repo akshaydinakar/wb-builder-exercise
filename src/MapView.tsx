@@ -52,6 +52,7 @@ export default function MapView() {
   const [showSubstations, setShowSubstations] = useState(true);
   const [riskView, setRiskView] = useState(false);
   const [showCounties, setShowCounties] = useState(true);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   /**
    * If substations are hidden, hide riskView, because it only affects the styling of substations.
@@ -61,6 +62,47 @@ export default function MapView() {
       setRiskView(false);
     }
   }, [showSubstations, riskView]);
+
+  /**
+   * Resize map when panel collapses/expands to ensure it fills the available space.
+   * Preserves the geographic center and zoom to prevent the map from shifting.
+   */
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    
+    // Store current view state in geographic coordinates before resize
+    const center = map.getCenter();
+    const centerLngLat: [number, number] = [center.lng, center.lat];
+    const zoom = map.getZoom();
+    const bearing = map.getBearing();
+    const pitch = map.getPitch();
+    
+    // Handler to restore center after resize
+    const restoreCenter = () => {
+      map.jumpTo({
+        center: centerLngLat,
+        zoom: zoom,
+        bearing: bearing,
+        pitch: pitch,
+      });
+      // Remove the listener after restoring
+      map.off('resize', restoreCenter);
+    };
+    
+    // Listen for resize event to restore center after Mapbox finishes resizing
+    map.once('resize', restoreCenter);
+    
+    // Use requestAnimationFrame to ensure DOM has updated, then resize
+    const rafId = requestAnimationFrame(() => {
+      map.resize();
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      map.off('resize', restoreCenter);
+    };
+  }, [isPanelCollapsed]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -392,7 +434,7 @@ export default function MapView() {
           justifyContent: "center",
           alignItems: "center",
           padding: 24,
-          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+          fontFamily: "Helvetica, Arial, sans-serif",
           background: "#fafafa",
         }}
       >
@@ -410,7 +452,7 @@ export default function MapView() {
           <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>Mapbox token required</div>
           <div style={{ color: "#555", fontSize: 13, lineHeight: 1.45 }}>
             This app needs a Mapbox access token to render the map. Please add a token to{" "}
-            <span style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+            <span style={{ fontFamily: "Helvetica, Arial, sans-serif" }}>
               .env.local
             </span>{" "}
             and restart the dev server (or reload the Codespace).
@@ -431,27 +473,81 @@ export default function MapView() {
    * The effects above keep them in sync.
    */
   return (
-    <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
+    <div style={{ display: "flex", width: "100vw", height: "100vh", position: "relative", overflow: "hidden", margin: 0, padding: 0 }}>
       {/* Map container div: Mapbox draws into this element */}
-      <div ref={mapContainer} style={{ flex: 1 }} />
+      <div ref={mapContainer} style={{ flex: 1, minWidth: 0, width: "100%", height: "100%" }} />
+
+      {/* Floating expand button when collapsed */}
+      {isPanelCollapsed && (
+        <button
+          onClick={() => setIsPanelCollapsed(false)}
+          style={{
+            position: "absolute",
+            right: 0,
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "#f0f0f0",
+            border: "1px solid #eee",
+            borderRight: "none",
+            borderTopLeftRadius: "8px",
+            borderBottomLeftRadius: "8px",
+            cursor: "pointer",
+            fontSize: 20,
+            color: "#000",
+            padding: "12px 8px",
+            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "-2px 0 4px rgba(0,0,0,0.1)",
+          }}
+          title="Expand panel"
+        >
+          ◀
+        </button>
+      )}
 
       {/* Info panel */}
+      {!isPanelCollapsed && (
       <div
         style={{
-          width: 380,
+          width: "450px",
           padding: 16,
           borderLeft: "1px solid #eee",
           overflow: "auto",
-          fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+          fontFamily: "Helvetica, Arial, sans-serif",
+          background: "#f0f0f0",
+          display: "flex",
+          flexDirection: "column",
+          flexShrink: 0,
         }}
       >
-        <div style={{ fontWeight: 700, marginBottom: 10 }}>Info Panel</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <div style={{ fontSize: 20, fontWeight: 700, color: "#000" }}>Info Panel</div>
+          <button
+            onClick={() => setIsPanelCollapsed(true)}
+            style={{
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              fontSize: 20,
+              color: "#000",
+              padding: "4px 8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            title="Collapse panel"
+          >
+            ▶
+          </button>
+        </div>
 
         {/* Layer toggles */}
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Layers</div>
+          <div style={{ fontSize: 12, color: "#000", marginBottom: 6 }}>Layers</div>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, color: "#000" }}>
             <input
               type="checkbox"
               checked={showCounties}
@@ -460,7 +556,7 @@ export default function MapView() {
             Counties (polygons)
           </label>
 
-          <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, color: "#000" }}>
             <input
               type="checkbox"
               checked={showSubstations}
@@ -471,7 +567,7 @@ export default function MapView() {
 
           {/* Only show the “risk view” toggle if substations are visible */}
           {showSubstations && (
-            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#000" }}>
               <input
                 type="checkbox"
                 checked={riskView}
@@ -484,20 +580,20 @@ export default function MapView() {
 
         {/* County selection section */}
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected county</div>
+          <div style={{ fontSize: 12, color: "#000", marginBottom: 6 }}>Selected county</div>
           {!selectedCountyName ? (
-            <div style={{ color: "#666" }}>Click a county to see its name.</div>
+            <div style={{ color: "#000" }}>Click a county to see its name.</div>
           ) : (
-            <div style={{ fontWeight: 600 }}>{selectedCountyName}</div>
+            <div style={{ fontWeight: 600, color: "#000" }}>{selectedCountyName}</div>
           )}
         </div>
 
         {/* Substation selection section */}
         <div style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>Selected substation</div>
+          <div style={{ fontSize: 12, color: "#000", marginBottom: 6 }}>Selected substation</div>
 
           {!selectedProps ? (
-            <div style={{ color: "#666" }}>Click a substation to see its details.</div>
+            <div style={{ color: "#000" }}>Click a substation to see its details.</div>
           ) : (
             <div
               style={{
@@ -517,13 +613,13 @@ export default function MapView() {
                   marginBottom: 10,
                 }}
               >
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, lineHeight: 1.2, color: "#000", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {selectedProps.name ?? "Unnamed Substation"}
                   </div>
-                  <div style={{ fontSize: 12, color: "#666", marginTop: 3 }}>
+                  <div style={{ fontSize: 12, color: "#000", marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     Asset ID:{" "}
-                    <span style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>
+                    <span style={{ fontFamily: "Helvetica, Arial, sans-serif" }}>
                       {selectedProps.asset_id ?? "—"}
                     </span>
                   </div>
@@ -541,6 +637,7 @@ export default function MapView() {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -553,8 +650,8 @@ export default function MapView() {
 function DetailRow({ label, value }: { label: string; value: any }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-      <div style={{ fontSize: 12, color: "#666" }}>{label}</div>
-      <div style={{ fontSize: 12, fontWeight: 600, textAlign: "right" }}>{value}</div>
+      <div style={{ fontSize: 12, color: "#000", flexShrink: 0 }}>{label}</div>
+      <div style={{ fontSize: 12, fontWeight: 600, textAlign: "right", color: "#000", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{value}</div>
     </div>
   );
 }
