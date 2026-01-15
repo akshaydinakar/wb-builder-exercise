@@ -30,7 +30,7 @@ Once you are satisfied with your code changes, create a ZIP file of all your cod
   - Git: `brew install git`
   - Node.js: `brew install node`
 2) Download/install Cursor: https://cursor.com/download
-3) Clone this GitHub repository to your local device.
+3) Clone this GitHub repository to your local device, and then open in Cursor.
 4) Create a file named `.env.local` in the repository, and add the Mapbox token provided in the emailed instructions:
    VITE_MAPBOX_TOKEN=pk.XXXXXXXX
 5) Type this command to run the application: `npm run dev`
