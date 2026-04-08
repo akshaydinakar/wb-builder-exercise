@@ -18,7 +18,7 @@ Once you are satisfied with your code changes, create a ZIP file of all your cod
 
 ## Requirements
 - Keep changes frontend-only (no backend work required) - most of the frontend code lives in the MapView.tsx file.
-- Email your submission as a ZIP file before the Presentation Interview (ideally 1 hr+ in advance).
+- Email your submission as a ZIP file.
 - Along with your submission, include notes on the following:
   - What you changed
   - Why these changes matter 
