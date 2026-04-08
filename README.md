@@ -12,6 +12,7 @@ Your task is to extend this existing prototype codebase, with the holistic goal 
 Specifically, you are asked to:
 1) Implement at least two frontend/UI changes that meaningfully improve the user’s ability to interpret, compare, or act on the existing data.
 2) Add a new, value-adding data layer of your choosing to the map. Creativity is encouraged – feel free to use dummy data if needed.
+3) Introduce an interactive tool that you think would provide value to the user (e.g. a magic marker, annotation tool, etc.) – be creative! 
 
 Once you are satisfied with your code changes, create a ZIP file of all your code and submit it via email.
 > Heads up! This is a public repository. We recommend that you clone this repository to your local device, and use Cursor (https://cursor.com/download) to make code changes.
